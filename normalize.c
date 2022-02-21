@@ -61,6 +61,9 @@ main(int argc, char** argv){
 	short* data;
 	short max;
 
+	short top_two[2] = {0, 0};
+	int top_two_inds[2] = {0, 0};
+
 	// read input file
 	file = sf_open(file_in_path, SFM_READ, &info);
 
@@ -77,8 +80,25 @@ main(int argc, char** argv){
 
 	// find max
 	for(int i = 0; i < info.frames; i++)
-		if(data[i] > max)
-			max = data[i];
+		if(data[i] > top_two[0]){
+			top_two[0] = data[i];
+			top_two_inds[0] = i;
+		}
+		else if(data[i] > top_two[1]){
+			top_two[1] = data[i];
+			top_two_inds[1] = i;
+		}
+		/* if(data[i] > max) */
+		/* 	max = data[i]; */
+
+	if(top_two[0] - top_two[1] > 900){
+		max = top_two[1];
+		printf("%d\n", top_two_inds[1] / info.samplerate);
+	}
+	else{
+		printf("%d\n", top_two_inds[0] / info.samplerate);
+		max = top_two[0];
+	}
 
 	printf("Normalizing...\n");
 	WaveData output = peak_normalize(data, info.frames, max);
