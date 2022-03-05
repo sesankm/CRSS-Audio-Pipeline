@@ -77,7 +77,7 @@ main(int argc, char** argv){
 
 	info.samplerate = 8000;
 	info.frames = output.count;
-	info.channels = 1;
+	/* info.channels = 1; */
 
 	/* // output path */
 	SNDFILE* outfile = sf_open(file_out_path, SFM_WRITE, &info);

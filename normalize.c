@@ -42,7 +42,6 @@ main(int argc, char** argv){
 	short* data;
 	short max;
 
-
 	// read input file
 	file = sf_open(file_in_path, SFM_READ, &info);
 
@@ -58,10 +57,33 @@ main(int argc, char** argv){
 		exit(-1);
 	}
 
-	// find max
-	for(long i = 0; i < info.frames; i++){
+	// look for an audio spike in the first 2 minutes
+	// find max in the first 2 minutes
+	int peak_index = -1;
+	for(long i = 0; i < info.samplerate * 60 * 2; i++){
+		if(abs(data[i]) > max){
+			max = abs(data[i]);
+			peak_index = i;
+		}
+	}
+	// if the max signal is greater than 900, it  needs to be trimmed
+	if(max > 900)
+		peak_index += info.samplerate / 10;
+	else
+		peak_index = -1;
+
+	max = 0;
+	// find max in the audio after the spike (if there was a spike)
+	for(long i = peak_index + 1; i < info.frames; i++)
 		if(abs(data[i]) > max)
 			max = abs(data[i]);
+
+	if(peak_index > 0){
+		// update the number of frames if there was a spike
+		info.frames -= peak_index;
+		num_frames = info.frames;
+		// trim out the audio before the spike
+		memmove((void*) data, (void*)(data + peak_index), info.frames * sizeof(short));
 	}
 
 	int buffer_size = info.frames / 8;
