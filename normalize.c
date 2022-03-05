@@ -59,31 +59,52 @@ main(int argc, char** argv){
 
 	// look for an audio spike in the first 2 minutes
 	// find max in the first 2 minutes
-	int peak_index = -1;
+	int start_peak_index = -1;
 	for(long i = 0; i < info.samplerate * 60 * 2; i++){
 		if(abs(data[i]) > max){
 			max = abs(data[i]);
-			peak_index = i;
+			start_peak_index = i;
 		}
 	}
 	// if the max signal is greater than 900, it  needs to be trimmed
 	if(max > 900)
-		peak_index += info.samplerate / 10;
+		start_peak_index += info.samplerate / 10;
 	else
-		peak_index = -1;
+		start_peak_index = -1;
+
+
+	int end_peak_index = -1;
+	for(long i = info.frames - info.samplerate * 60 * 2; i < info.frames; i++){
+		if(abs(data[i]) > max){
+			max = abs(data[i]);
+			end_peak_index = i;
+		}
+	}
+	// if the max signal is greater than 900, it  needs to be trimmed
+	if(max > 900)
+		end_peak_index -= info.samplerate / 10;
+	else
+		end_peak_index = -1;
+
 
 	max = 0;
 	// find max in the audio after the spike (if there was a spike)
-	for(long i = peak_index + 1; i < info.frames; i++)
+	for(long i = start_peak_index + 1; i < end_peak_index; i++)
 		if(abs(data[i]) > max)
 			max = abs(data[i]);
 
-	if(peak_index > 0){
+	if(start_peak_index > 0){
 		// update the number of frames if there was a spike
-		info.frames -= peak_index;
+		info.frames -= start_peak_index;
 		num_frames = info.frames;
 		// trim out the audio before the spike
-		memmove((void*) data, (void*)(data + peak_index), info.frames * sizeof(short));
+		memmove((void*) data, (void*)(data + start_peak_index), info.frames * sizeof(short));
+	}
+
+	if(end_peak_index > 0){
+		// update the number of frames if there was a spike
+		info.frames = end_peak_index;
+		num_frames = info.frames; // change the ending index
 	}
 
 	int buffer_size = info.frames / 8;
@@ -103,8 +124,8 @@ main(int argc, char** argv){
 		}
 		else
 			start_ind = end_ind + 1;
-
 		end_ind = start_ind + buffer_size;
+
 		memcpy(buff, data + start_ind, buffer_size);
 		WaveData normed_chunk = peak_normalize(data, buffer_size, max);
 
