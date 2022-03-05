@@ -4,6 +4,8 @@
 #include <string.h>
 #include <math.h>
 
+#define dBVAL(x) (20 * log10((double)x / 32767.0))
+
 typedef struct {
 	double* data;
 	long count;
@@ -57,23 +59,21 @@ main(int argc, char** argv){
 		exit(-1);
 	}
 
-	// look for an audio spike in the first 2 minutes
-	// find max in the first 2 minutes
 	int start_peak_index = -1;
+	int end_peak_index = -1;
+
 	for(long i = 0; i < info.samplerate * 60 * 2; i++){
 		if(abs(data[i]) > max){
 			max = abs(data[i]);
 			start_peak_index = i;
 		}
 	}
-	// if the max signal is greater than 900, it  needs to be trimmed
-	if(max > 900)
+	if(dBVAL(max) > -19)
 		start_peak_index += info.samplerate / 10;
 	else
 		start_peak_index = -1;
 
-
-	int end_peak_index = -1;
+	max = 0;
 	for(long i = info.frames - info.samplerate * 60 * 2; i < info.frames; i++){
 		if(abs(data[i]) > max){
 			max = abs(data[i]);
@@ -81,15 +81,14 @@ main(int argc, char** argv){
 		}
 	}
 	// if the max signal is greater than 900, it  needs to be trimmed
-	if(max > 900)
+	if(dBVAL(max) > -19)
 		end_peak_index -= info.samplerate / 10;
 	else
 		end_peak_index = -1;
 
-
 	max = 0;
 	// find max in the audio after the spike (if there was a spike)
-	for(long i = start_peak_index + 1; i < end_peak_index; i++)
+	for(long i = start_peak_index + 1; i < num_frames; i++)
 		if(abs(data[i]) > max)
 			max = abs(data[i]);
 
@@ -109,41 +108,35 @@ main(int argc, char** argv){
 
 	int buffer_size = info.frames / 8;
 	long start_ind = 0;
-	long end_ind = start_ind + buffer_size;
 	SNDFILE* outfile = sf_open(file_out_path, SFM_WRITE, &info);
-	int not_finished = 0;
+	int num_wrote = 0;
 
 	/* Normalizing in chunks */
 	printf("Normalizng..\n");
 	while(start_ind < num_frames){
 		short* buff = malloc(sizeof(short) * buffer_size);
-
-		if(end_ind + 1 > num_frames){
-			not_finished = 1;
-			break;
-		}
-		else
-			start_ind = end_ind + 1;
-		end_ind = start_ind + buffer_size;
-
-		memcpy(buff, data + start_ind, buffer_size);
-		WaveData normed_chunk = peak_normalize(data, buffer_size, max);
+		memcpy(buff, (data + start_ind), buffer_size * sizeof(short));
+		WaveData normed_chunk = peak_normalize(buff, buffer_size, max);
 
 		sf_write_double(outfile, normed_chunk.data, buffer_size);
 		free(normed_chunk.data);
 		free(buff);
+		start_ind += buffer_size + 1;
+		num_wrote += buffer_size;
 	}
 
-	/* if there's more samples, read the rest of them and finish normalizing 
-	 * this isn't the best way to do this, change it later */
-	if(not_finished){
-		long frames_left = num_frames - start_ind - 1;
+	/* if there's any left over frames write them to the output file */
+	if(num_wrote < num_frames){
+		long frames_left = num_frames - num_wrote;
 		short* buff = malloc(sizeof(short) * frames_left);
-		memcpy(buff, data + start_ind, frames_left);
-		WaveData normed_chunk = peak_normalize(data, frames_left, max);
+
+		memcpy(buff, data + start_ind, frames_left * sizeof(short));
+		WaveData normed_chunk = peak_normalize(buff, frames_left, max);
+
 		sf_write_double(outfile, normed_chunk.data, frames_left);
 		free(normed_chunk.data);
-		free(buff);
+
+		num_wrote += frames_left;
 	}
 
 	sf_close(outfile);
