@@ -56,7 +56,7 @@ main(int argc, char** argv){
 	// read wave file
 	printf("Reading...\n");
 	if( !sf_readf_short(file, data, info.frames) ){
-		printf("Couldn't read file.");
+		printf("chunk: Couldn't read file.");
 		exit(-1);
 	}
 

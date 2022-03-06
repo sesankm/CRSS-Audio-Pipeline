@@ -68,7 +68,8 @@ main(int argc, char** argv){
 	printf("Reading...\n");
 	// read the data
 	if( !sf_readf_short(file, data, info.frames) ){
-		printf("Couldn't read file.");
+		printf("%d\n", sf_readf_short(file, data, info.frames));
+		printf("downsample: Couldn't read file.");
 		exit(-1);
 	}
 

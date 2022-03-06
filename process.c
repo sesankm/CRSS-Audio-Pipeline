@@ -27,10 +27,13 @@ main(int argc, char** argv){
 		wait(NULL);
 	
 	n = fork();
-	if(n == 0)
+	if(n == 0){
+		/* execl("/usr/bin/sox", "/usr/bin/sox", "./normed_audio.wav", "-r", "8000", "./downsampled_audio.wav", (char*) NULL); */
 		execl("./downsample", "./downsample", "./normed_audio.wav", "./downsampled_audio.wav", (char*) NULL);
-	else
+	}
+	else{
 		wait(NULL);
+	}
 
 	n = fork();
 	if(n == 0)

@@ -55,7 +55,7 @@ main(int argc, char** argv){
 	printf("Reading...\n");
 	// read the data
 	if( !sf_readf_short(file, data, info.frames) ){
-		printf("Couldn't read file.");
+		printf("normalize: Couldn't read file.");
 		exit(-1);
 	}
 
@@ -109,10 +109,10 @@ main(int argc, char** argv){
 	int buffer_size = info.frames / 8;
 	long start_ind = 0;
 	SNDFILE* outfile = sf_open(file_out_path, SFM_WRITE, &info);
-	int num_wrote = 0;
+	long num_wrote = 0;
 
 	/* Normalizing in chunks */
-	printf("Normalizng..\n");
+	printf("Normalizing..\n");
 	while(start_ind < num_frames){
 		short* buff = malloc(sizeof(short) * buffer_size);
 		memcpy(buff, (data + start_ind), buffer_size * sizeof(short));
@@ -130,12 +130,11 @@ main(int argc, char** argv){
 		long frames_left = num_frames - num_wrote;
 		short* buff = malloc(sizeof(short) * frames_left);
 
-		memcpy(buff, data + start_ind, frames_left * sizeof(short));
+		memcpy(buff, data + (num_frames - num_wrote - 1), frames_left * sizeof(short));
 		WaveData normed_chunk = peak_normalize(buff, frames_left, max);
 
 		sf_write_double(outfile, normed_chunk.data, frames_left);
 		free(normed_chunk.data);
-
 		num_wrote += frames_left;
 	}
 
