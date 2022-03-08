@@ -9,20 +9,19 @@
 
 int
 main(int argc, char** argv){
-	if(argc < 7){
+	if(argc < 8){
 		printf("ERROR: Not enough arguments\n");
-		printf("Usage: chunk [input file] [mission] [tape] [historical recorder] [cannel] [mission start] [mission end]\n");
+		printf("Usage: chunk [input file] [mission] [tape] [historical recorder] [cannel] [mission start] [mission end] [output dir name]\n");
 		exit(1);
 	}
 
 	char orig_file_name[100];
-	char dir_name[100];
+	char* dir_name = argv[8];
 	const char* mission_start;
 	const char* mission_end;
 	const char* file_in_path;
 
 	sprintf(orig_file_name, "A%s_T%s_HR%s_CH%s", argv[2], argv[3], argv[4], argv[5]);
-	sprintf(dir_name, "./A%s_chunks", argv[2]);
 	mission_start = argv[6];
 	mission_end = argv[7];
 	file_in_path = argv[1];
@@ -76,7 +75,7 @@ main(int argc, char** argv){
 			window = num_original_samples - ind;
 			info.frames = num_original_samples - ind;
 			done = 1;
-			printf("%d\n", count);
+			printf("Chunks written: %d\n", count);
 		}
 
 		memcpy(buffer, data + ind, window * sizeof(short));
