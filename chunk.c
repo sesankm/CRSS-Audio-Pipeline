@@ -64,6 +64,7 @@ main(int argc, char** argv){
 	short* buffer = malloc(sizeof(short) * window); // save buffer to a file
 	int num_original_samples = info.frames; // save total number of samples
 	info.frames = (int) window; // edit info struct since we're writing new data
+	info.format = SF_FORMAT_WAV|SF_FORMAT_PCM_16; 
 	int count = 0; // keeps track of the chunk id
 	int done = 0; // bool to break the loop
 
