@@ -1,11 +1,19 @@
 #include <stdio.h>
-
-int main()
+#include <stdlib.h>
+int main(int argc, char *argv[])
 {
     int sec, h, m;
     char time[100];
-    printf("Input time: ");
-    scanf("%s", time);
+	if(argc < 3)
+	{
+		printf("Arguments supplied are insufficient.\n");
+		exit(0);
+	}
+	else {
+	h = (int) (argv[1]);
+	m = (int)(argv[2]);
+    //printf("Input time: ");
+    //scanf("%s", time);
 	if (sscanf(time, "%d:%d", &h, &m) >= 2){
 	   sec = h*3600 + m*60;
 	}
@@ -19,7 +27,7 @@ int main()
 	  else
         printf("%d:%d\n", h, m);		    
 	}
-		
+	}	
 	
 	return 0;
 }
