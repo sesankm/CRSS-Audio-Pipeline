@@ -1,25 +1,31 @@
 #include <stdio.h>
-
-int main()
+#include <stdlib.h>
+#include <math.h>
+int main(int argc, char *argv[])
 {
-    int sec, h, m;
-    char time[100];
-    printf("Input time: ");
-    scanf("%s", time);
-	if (sscanf(time, "%d:%d", &h, &m) >= 2){
-	   sec = h*3600 + m*60;
+    int h, m, timecode;
+	if(argc < 3 || argc > 3)
+	{
+		printf("Arguments supplied are insufficient or too much.\n");
+		exit(0);
 	}
-	for(int count = 0; count < 5; count++){
-	  sec = sec + 1800;
-	  h = (sec/3600);
-	  m = (sec-(3600*h))/60;
-	 int nDigits ;
-	  if(m < 10)
-		  printf("%d:0%d\n", h, m);
-	  else
-        printf("%d:%d\n", h, m);		    
-	}
+	else {
+	h = atoi(argv[1]);
+	m = atoi(argv[2]);
+	timecode = h*60+m;
+	for(int i = 0; i < 5; i++)
+	{
 		
+		int temp1;
+		temp1 = floor(timecode / 60);
+		int temp2 = timecode % 60;
+		if((timecode%60) < 10)
+		  printf("%d:0%d\n", temp1, temp2);
+	  	else
+        printf("%d:%d\n", temp1, temp2);
+		timecode = timecode+30;
+	}
+	}	
 	
 	return 0;
 }
