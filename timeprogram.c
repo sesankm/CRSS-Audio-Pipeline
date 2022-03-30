@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 	else {
-	h = (int) (argv[1]);
-	m = (int)(argv[2]);
+	h = atoi(argv[1]);
+	m = atoi(argv[2]);
     //printf("Input time: ");
     //scanf("%s", time);
 	if (sscanf(time, "%d:%d", &h, &m) >= 2){
