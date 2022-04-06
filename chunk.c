@@ -125,7 +125,7 @@ main(int argc, char** argv){
 		// printf("%02d-%02d_%02d:%02d\n", month_num, day_num, time_hour, time_minute);
 
 		char out_file_name[250];
-		sprintf(out_file_name, "%s/%s_%02d-%02d_%02d-%02d-%d.wav", dir_name, orig_file_name, time_hour, time_minute, (int)floor((number_of_minutes + 30) / 60), (int)floor((number_of_minutes + 30) % 60), count);
+		sprintf(out_file_name, "%s/%s_%0d-%0d_%02d-%02d_%02d-%02d_%02d-%02d-%d.wav", dir_name, orig_file_name, month_num, day_num, time_hour, time_minute, (int)floor((number_of_minutes + 30) / 60), (int)floor((number_of_minutes + 30) % 60), month_num, day_num, count);
 
 
 		/* if the window goes over number of elements, change window size to number of remaining elements */
