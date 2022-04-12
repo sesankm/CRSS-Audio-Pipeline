@@ -32,8 +32,8 @@ main(int argc, char** argv){
 	 *  Mission number
 	 *  Tape number
 	 *  Recorder number
-	 *  Mission start in this format: "[day]-[hour]-[minute]-[seconds]"
-	 *  Mission end in this format: "[day]-[hour]-[minute]-[seconds]" */
+	 *  Mission start in this format: "[YYYYMMDD]-[HH]-[MM]"
+	 *  Mission end in this format: "[YYYYMMDD]-[HH]-[MM]" */
 
 	char* base_dir = argv[1];
 	char* channel_names_text_file = "channels.txt";
@@ -42,7 +42,7 @@ main(int argc, char** argv){
 
 	if(argc < 6){
 		printf("ERROR: Not enough arguments.\n");
-		printf("Usage: ./process [input directory] [mission number] [tape number] [recorder number] [mission start] [mission end].\n");
+		printf("Usage: ./process [input directory] [mission number] [tape number] [recorder number] [YYYYMMDD-HH-MM (start time)] [YYYYMMDD-HH-MM (end time)].\n");
 		exit(1);
 	}
 
