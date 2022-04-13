@@ -78,7 +78,6 @@ main(int argc, char** argv){
 			execl("./chunk", "./chunk", "./downsampled_audio.wav", argv[2], argv[3], argv[4], channel_names[i-1], argv[5], argv[6], output_dir_name, (char*) NULL);
 		else
 			wait(NULL);
-		break;
 	}
 
 	exit(0);
