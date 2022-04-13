@@ -46,7 +46,7 @@ main(int argc, char** argv){
 		exit(1);
 	}
 
-	for(int i = 9; i < num_channels; i++){
+	for(int i = 1; i < num_channels; i++){
 		char file_name[500];
 		char output_dir_name[500];
 
