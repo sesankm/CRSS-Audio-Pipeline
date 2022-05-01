@@ -14,6 +14,7 @@
 - example: `./process ./Audio\ Files/ 8 213 HR1L 03221999-03-24 03221999-20-24`
 - this runs normalize.c, then saves normalized and downsampled file in `normed_audio.wav`
 - after normalizing, it runs chunk.c with `normed_audio.wav` as input
+- there should be a textfile called 'channels.txt' in the root folder of the tape
 
 ## Chunking
 - `make`
